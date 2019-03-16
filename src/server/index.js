@@ -29,7 +29,7 @@ low(adapter)
     // });
 
     // Set db default values
-    return db.defaults({ notes: [{ id: 'test_id', value: 'test_value' }] }).write();
+    return db.defaults({ notes: [{ id: 'test_id_0', value: 'test_value_0' }, { id: 'test_id_1', value: 'test_value_1' }] }).write();
   })
   .then(() => {
     app.listen(8080, () => console.log('listening on port 8080'));

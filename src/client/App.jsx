@@ -1,30 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './App.css';
 import { connect } from 'react-redux';
-import { notes } from './actions';
+import { BrowserRouter, Route } from 'react-router-dom'
+import Notes from './components/Notes';
 
 class App extends React.Component {
   componentDidMount() {
-    const { init } = this.props;
-    init();
+    console.log('App mounted');
   }
 
   render() {
     return (
-      <div>setup</div>
+      <div className="app-container">
+        <BrowserRouter>
+          <Route path="/*" component={Notes} />
+        </BrowserRouter>
+      </div>
     );
   }
 }
 
-App.propTypes = {
-  init: PropTypes.func.isRequired,
-};
+// TODO add app level data and dispatches
+App.propTypes = {};
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = dispatch => ({
-  init: () => dispatch(notes.initializeNotes()),
-});
+const mapDispatchToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

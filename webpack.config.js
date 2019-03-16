@@ -34,7 +34,13 @@ module.exports = {
   devServer: {
     port: 3000,
     proxy: {
-      '/api': 'http://localhost:8080'
+      '/api': {
+        target: 'http://localhost:8080'
+      },
+      '/': {
+        target: 'http://localhost:3000',
+        pathRewrite: { '^.*': '' }
+      }
     }
   },
   plugins: [

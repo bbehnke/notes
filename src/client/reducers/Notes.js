@@ -1,11 +1,10 @@
-export default (state = { notes: '' }, action) => {
+export default (state = [], action) => {
   const { type, data } = action;
   switch (type) {
     case 'SET_NOTES':
-      return {
-        ...state,
-        notes: data.notes
-      };
+      return [
+        ...data.notes
+      ];
     default:
       return state;
   }

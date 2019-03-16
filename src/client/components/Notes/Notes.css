@@ -1,0 +1,7 @@
+.notes-container {
+  display: flex;
+}
+
+.note-editor {
+  margin-left: 30px;
+}
