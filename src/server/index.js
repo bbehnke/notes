@@ -29,7 +29,12 @@ low(adapter)
     // });
 
     // Set db default values
-    return db.defaults({ notes: [{ id: 'test_id_0', value: 'test_value_0' }, { id: 'test_id_1', value: 'test_value_1' }] }).write();
+    return db.defaults({
+      notes: [
+        { id: '1', value: 'Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes' },
+        { id: '2', value: 'Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes' }
+      ]
+    }).write();
   })
   .then(() => {
     app.listen(8080, () => console.log('listening on port 8080'));
