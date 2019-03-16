@@ -1,10 +1,10 @@
 import { put } from 'redux-saga/effects';
 import { getNotes } from '../fetches';
-import { notes as noteActions } from '../actions';
+import { notes as noteActions, page as pageActions } from '../actions';
 
 export default function* initializeNotes() {
   try {
-    // TODO set loading true
+    yield put(pageActions.setLoading(true));
     const {
       data,
       error
@@ -21,6 +21,6 @@ export default function* initializeNotes() {
     // TODO add error handling/logging
     console.error(e);
   } finally {
-    // TODO set loading false
+    yield put(pageActions.setLoading(false));
   }
 }

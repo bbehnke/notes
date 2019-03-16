@@ -6,20 +6,32 @@ import { notes as notesActions } from '../../actions';
 import NotesListItem from '../NotesListItem';
 
 class Notes extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
+    this.onListItemClick = this.onListItemClick.bind(this);
+
     const pathValue = window.location.pathname.replace('/', '');
     let activeNoteIndex = 0;
     if (pathValue) {
-      activeNoteIndex = parseInt(pathValue, 10) - 1
-      if (isNaN(activeNoteIndex)) {
+      activeNoteIndex = parseInt(pathValue, 10) - 1;
+      if (Number.isNaN(activeNoteIndex)) {
         activeNoteIndex = undefined;
       }
     }
     this.state = {
       activeNoteIndex
     };
-    this.onListItemClick = this.onListItemClick.bind(this);
+    const { history, location } = this.props;
+    let finalPath;
+    if (typeof activeNoteIndex === 'undefined') {
+      finalPath = '/unknown';
+    } else {
+      finalPath = `/${activeNoteIndex + 1}`;
+    }
+    if (finalPath !== location.pathname) {
+      history.push(finalPath);
+    }
   }
 
   componentDidMount() {
@@ -38,7 +50,13 @@ class Notes extends React.Component {
   }
 
   render() {
-    const { notes } = this.props;
+    const { notes, isLoading } = this.props;
+
+    if (isLoading) {
+      // TODO show spinner
+      return null;
+    }
+
     const { activeNoteIndex } = this.state;
     const invalid = typeof activeNoteIndex === 'undefined' || activeNoteIndex < 0 || activeNoteIndex > notes.length - 1;
     const activeNote = notes.length ? notes[activeNoteIndex] : undefined;
@@ -77,11 +95,13 @@ Notes.propTypes = {
   notes: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired
-  })).isRequired
+  })).isRequired,
+  isLoading: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => ({
-  notes: state.notes
+  notes: state.notes,
+  isLoading: state.page.loading
 });
 
 const mapDispatchToProps = dispatch => ({
