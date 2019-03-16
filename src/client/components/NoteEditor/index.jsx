@@ -3,15 +3,14 @@
 /* eslint jsx-a11y/no-static-element-interactions: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import './NotesListItem.css';
+import './NoteEditor.css';
 
 const previewLength = 20;
 
-class NotesListItem extends React.PureComponent {
+class NoteEditor extends React.PureComponent {
   render() {
     const { note, active, onItemClick } = this.props;
-    const preview = note.value.length > 20
-      ? `${note.value.slice(0, previewLength - 3)}...` : note.value;
+    const preview = note.value.length > 20 ? note.value.slice(0, previewLength) : note.value;
     const classPrefix = 'notes-list-item-';
     return (
       <div
@@ -25,12 +24,12 @@ class NotesListItem extends React.PureComponent {
   }
 }
 
-NotesListItem.defaultProps = {
+NoteEditor.defaultProps = {
   active: false,
   onItemClick: () => {}
 };
 
-NotesListItem.propTypes = {
+NoteEditor.propTypes = {
   note: PropTypes.shape({
     index: PropTypes.number,
     value: PropTypes.string.isRequired
@@ -39,4 +38,4 @@ NotesListItem.propTypes = {
   onItemClick: PropTypes.func
 };
 
-export default NotesListItem;
+export default NoteEditor;
