@@ -1,3 +1,4 @@
+# notes
 Simple standalone notes web app built with ReactJS and Express. 
 
 # Install and use
