@@ -14,25 +14,49 @@ low(adapter)
     // Routes
     // GET /notes
     app.get('/api/notes', (req, res) => {
-      const notes = db.get('notes').value();
-      res.send(notes);
+      res.send(
+        db.get('notes')
+          .sortBy('id')
+          .value()
+      );
     });
 
-    // POST /posts
-    // app.post('/posts', (req, res) => {
-    //   db.get('posts')
-    //     .push(req.body)
-    //     .last()
-    //     .assign({ id: Date.now().toString() })
-    //     .write()
-    //     .then(post => res.send(post));
-    // });
+    // POST /notes
+    app.post('/api/notes', (req, res) => {
+      const { id, value } = req.body;
+      db.get('notes')
+        .find({ id })
+        .assign({ value })
+        .write();
+      res.send(
+        db.get('notes')
+          .sortBy('id')
+          .value()
+      );
+    });
+
+    // PUT /notes
+    app.put('/api/notes', (req, res) => {
+      db.get('notes')
+        .push({
+          id: db.get('notes')
+            .sortBy('id')
+            .last()
+            .value().id + 1,
+          value: ''
+        })
+        .write();
+      res.send(
+        db.get('notes')
+          .sortBy('id')
+          .value()
+      );
+    });
 
     // Set db default values
     return db.defaults({
       notes: [
-        { id: '1', value: 'Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes' },
-        { id: '2', value: 'Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotes Notes notesnotesNotes notesnotes Notes notesnotes' }
+        { id: 1, value: 'This is your first note!\nYou can update it and click \'Save note\'.\nYou can also create more notes by clicking \'Create note\'.' }
       ]
     }).write();
   })

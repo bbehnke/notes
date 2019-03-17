@@ -1,41 +1,63 @@
-// TODO update to be accessible compliant
-/* eslint jsx-a11y/click-events-have-key-events: 0 */
-/* eslint jsx-a11y/no-static-element-interactions: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
 import './NoteEditor.css';
 
-const previewLength = 20;
+class NoteEditor extends React.Component {
+  constructor() {
+    super();
+    this.state = {};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-class NoteEditor extends React.PureComponent {
+  static getDerivedStateFromProps(props, state) {
+    const { note } = props;
+    const { id } = state;
+    if (id === note.id) {
+      return null;
+    }
+    return {
+      id: note.id,
+      value: note.value
+    };
+  }
+
+  handleChange(event) {
+    this.setState({
+      value: event.target.value
+    });
+  }
+
+  handleSubmit(event) {
+    const { value } = this.state;
+    const { onSaveClick, note } = this.props;
+    onSaveClick(note.id, value);
+    event.preventDefault();
+  }
+
   render() {
-    const { note, active, onItemClick } = this.props;
-    const preview = note.value.length > 20 ? note.value.slice(0, previewLength) : note.value;
-    const classPrefix = 'notes-list-item-';
+    const { value } = this.state;
     return (
-      <div
-        onClick={() => onItemClick(note.index)}
-        className={`${classPrefix}container${active ? ' active' : ''}`}
-      >
-        <div className={`${classPrefix}id`}>{note.id}</div>
-        <div className={`${classPrefix}preview`}>{preview}</div>
+      <div className="note-editor">
+        <form className="note-editor-form" onSubmit={this.handleSubmit}>
+          <textarea
+            className="note-editor-text-area"
+            value={value}
+            onChange={this.handleChange}
+          />
+          <button className="note-editor-submit" type="submit">Save note</button>
+        </form>
       </div>
     );
   }
 }
 
-NoteEditor.defaultProps = {
-  active: false,
-  onItemClick: () => {}
-};
-
 NoteEditor.propTypes = {
   note: PropTypes.shape({
-    index: PropTypes.number,
+    id: PropTypes.number.isRequired,
     value: PropTypes.string.isRequired
   }).isRequired,
-  active: PropTypes.bool,
-  onItemClick: PropTypes.func
+  onSaveClick: PropTypes.func.isRequired
 };
 
 export default NoteEditor;

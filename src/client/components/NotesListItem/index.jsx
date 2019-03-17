@@ -15,7 +15,7 @@ class NotesListItem extends React.PureComponent {
     const classPrefix = 'notes-list-item-';
     return (
       <div
-        onClick={() => onItemClick(note.index)}
+        onClick={() => onItemClick(note.id - 1)}
         className={`${classPrefix}container${active ? ' active' : ''}`}
       >
         <div className={`${classPrefix}id`}>{note.id}</div>
@@ -32,7 +32,7 @@ NotesListItem.defaultProps = {
 
 NotesListItem.propTypes = {
   note: PropTypes.shape({
-    index: PropTypes.number,
+    id: PropTypes.number.isRequired,
     value: PropTypes.string.isRequired
   }).isRequired,
   active: PropTypes.bool,

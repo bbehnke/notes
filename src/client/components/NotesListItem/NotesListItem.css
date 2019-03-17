@@ -1,7 +1,8 @@
 .notes-list-item-container {
   display: flex;
   flex-direction: row;
-  border: 1px solid gray;
+  border: 1px solid black;
+  border-top: none;
   padding: 10px;
   cursor: pointer;
   text-align: center;

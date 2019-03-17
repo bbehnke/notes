@@ -3,15 +3,65 @@ import PropTypes from 'prop-types';
 import './Notes.css';
 import { connect } from 'react-redux';
 import { notes as notesActions } from '../../actions';
-import NotesListItem from '../NotesListItem';
+import NotesInvalidPath from '../NotesInvalidPath';
+import NotesList from '../NotesList';
+import NoteEditor from '../NoteEditor';
 
 class Notes extends React.Component {
   constructor(props) {
     super(props);
+    this.handleInvalidGoBackClick = this.handleInvalidGoBackClick.bind(this);
+    this.handleItemClick = this.handleItemClick.bind(this);
+    this.handleSaveClick = this.handleSaveClick.bind(this);
+    this.handleCreateClick = this.handleCreateClick.bind(this);
+    this.initialzeState = this.initialzeState.bind(this);
+    this.initializeUrlPath = this.initializeUrlPath.bind(this);
+    this.initialzeState();
+    this.initializeUrlPath();
+  }
 
-    this.onListItemClick = this.onListItemClick.bind(this);
+  componentDidMount() {
+    const { initialze } = this.props;
+    initialze();
+  }
 
-    const pathValue = window.location.pathname.replace('/', '');
+  handleInvalidGoBackClick() {
+    const { history } = this.props;
+    this.setState({
+      activeNoteIndex: 0
+    },
+    () => {
+      history.push('/1');
+    });
+  }
+
+  handleItemClick(index) {
+    const { history } = this.props;
+    this.setState({
+      activeNoteIndex: index
+    },
+    () => {
+      history.push(`/${index + 1}`);
+    });
+  }
+
+  handleSaveClick(id, value) {
+    const { updateNote, notes } = this.props;
+    const { activeNoteIndex } = this.state;
+    const activeNote = notes[activeNoteIndex];
+    if (activeNote.value !== value) {
+      updateNote(id, value);
+    }
+  }
+
+  handleCreateClick() {
+    const { createNote } = this.props;
+    createNote();
+  }
+
+  initialzeState() {
+    const { location } = this.props;
+    const pathValue = location.pathname.replace('/', '');
     let activeNoteIndex = 0;
     if (pathValue) {
       activeNoteIndex = parseInt(pathValue, 10) - 1;
@@ -22,10 +72,14 @@ class Notes extends React.Component {
     this.state = {
       activeNoteIndex
     };
+  }
+
+  initializeUrlPath() {
+    const { activeNoteIndex } = this.state;
     const { history, location } = this.props;
     let finalPath;
     if (typeof activeNoteIndex === 'undefined') {
-      finalPath = '/unknown';
+      finalPath = location.pathname;
     } else {
       finalPath = `/${activeNoteIndex + 1}`;
     }
@@ -34,69 +88,49 @@ class Notes extends React.Component {
     }
   }
 
-  componentDidMount() {
-    const { initialze } = this.props;
-    initialze();
-  }
-
-  onListItemClick(index) {
-    const { history } = this.props;
-    this.setState({
-      activeNoteIndex: index
-    },
-    () => {
-      history.push(`/${index + 1}`);
-    });
-  }
-
   render() {
     const { notes, isLoading } = this.props;
-
     if (isLoading) {
-      // TODO show spinner
-      return null;
+      // TODO replace with actual spinner
+      return <div>Loading...</div>;
     }
 
     const { activeNoteIndex } = this.state;
-    const invalid = typeof activeNoteIndex === 'undefined' || activeNoteIndex < 0 || activeNoteIndex > notes.length - 1;
-    const activeNote = notes.length ? notes[activeNoteIndex] : undefined;
-    return (
-      <div className="notes-container">
-        <div className="notes-list">
-          {
-            notes.map((note, index) => (
-              <NotesListItem
-                key={note.id}
-                note={{ ...note, index }}
-                active={!invalid && index === activeNoteIndex}
-                onItemClick={this.onListItemClick}
-              />
-            ))
-          }
-          {!notes.length && (
-            <NotesListItem
-              note={{
-                value: 'No notes yet'
-              }}
-            />
-          )}
+    const invalid = typeof activeNoteIndex === 'undefined'
+      || activeNoteIndex < 0
+      || activeNoteIndex > notes.length - 1;
+    let content;
+    if (invalid) {
+      content = <NotesInvalidPath onGoBackClick={this.handleInvalidGoBackClick} />;
+    } else {
+      const activeNote = notes[activeNoteIndex];
+      content = (
+        <div className="notes-container">
+          <NotesList
+            notes={notes}
+            activeNoteIndex={activeNoteIndex}
+            onItemClick={this.handleItemClick}
+            onCreateClick={this.handleCreateClick}
+          />
+          <NoteEditor note={activeNote} onSaveClick={this.handleSaveClick} />
         </div>
-        <div className="note-editor">
-          {!invalid && activeNote ? activeNote.value : ''}
-          {invalid ? 'INVALID ROUTE' : ''}
-        </div>
-      </div>
-    );
+      );
+    }
+    return content;
   }
 }
 
 Notes.propTypes = {
   initialze: PropTypes.func.isRequired,
+  updateNote: PropTypes.func.isRequired,
+  createNote: PropTypes.func.isRequired,
   notes: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     value: PropTypes.string.isRequired
   })).isRequired,
-  isLoading: PropTypes.bool.isRequired
+  isLoading: PropTypes.bool.isRequired,
+  history: PropTypes.shape({}).isRequired,
+  location: PropTypes.shape({}).isRequired
 };
 
 const mapStateToProps = state => ({
@@ -106,6 +140,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   initialze: () => dispatch(notesActions.initializeNotes()),
+  updateNote: (id, value) => dispatch(notesActions.updateNote(id, value)),
+  createNote: () => dispatch(notesActions.createNote())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Notes);
