@@ -1,6 +1,6 @@
 // TODO update to be accessible compliant
 /* eslint jsx-a11y/click-events-have-key-events: 0 */
-/* eslint jsx-a11y/no-static-element-interactions: 0 */
+/* eslint jsx-a11y/no-noninteractive-element-interactions: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
 import './NotesListItem.css';
@@ -14,13 +14,13 @@ class NotesListItem extends React.PureComponent {
       ? `${note.value.slice(0, previewLength - 3)}...` : note.value;
     const classPrefix = 'notes-list-item-';
     return (
-      <div
+      <li
         onClick={() => onItemClick(note.id - 1)}
         className={`${classPrefix}container${active ? ' active' : ''}`}
       >
         <div className={`${classPrefix}id`}>{note.id}</div>
         <div className={`${classPrefix}preview`}>{preview}</div>
-      </div>
+      </li>
     );
   }
 }

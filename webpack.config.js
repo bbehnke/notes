@@ -28,13 +28,14 @@ module.exports = {
     extensions: ['*', '.js', '.jsx']
   },
   devServer: {
-    port: 3000,
+    port: 8080,
+    open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080'
+        target: 'http://localhost:3000'
       },
       '/': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:8080',
         pathRewrite: { '^.*': '' }
       }
     }

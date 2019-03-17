@@ -12,7 +12,7 @@ class NotesList extends React.PureComponent {
       onCreateClick
     } = this.props;
     return (
-      <div className="notes-list">
+      <ul className="notes-list">
         {
           notes.map((note, index) => (
             <NotesListItem
@@ -23,14 +23,16 @@ class NotesList extends React.PureComponent {
             />
           ))
         }
-        <button
-          className="notes-list-create-button"
-          type="button"
-          onClick={onCreateClick}
-        >
-          Create note
-        </button>
-      </div>
+        <li>
+          <button
+            className="notes-list-create-button"
+            type="button"
+            onClick={onCreateClick}
+          >
+            Create note
+          </button>
+        </li>
+      </ul>
     );
   }
 }
