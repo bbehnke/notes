@@ -7,22 +7,50 @@ import NotesInvalidPath from '../NotesInvalidPath';
 import NotesList from '../NotesList';
 import NoteEditor from '../NoteEditor';
 
+const getPathActiveNoteIndex = (location) => {
+  const pathValue = location.pathname.replace('/', '');
+  let activeNoteIndex = 0;
+  if (pathValue) {
+    activeNoteIndex = parseInt(pathValue, 10) - 1;
+    if (Number.isNaN(activeNoteIndex)) {
+      activeNoteIndex = undefined;
+    }
+  }
+  return activeNoteIndex;
+};
+
 class Notes extends React.Component {
   constructor(props) {
     super(props);
+
+    const { location } = this.props;
+    this.state = {
+      activeNoteIndex: getPathActiveNoteIndex(location)
+    };
+
+    this.handlePopState = this.handlePopState.bind(this);
     this.handleInvalidGoBackClick = this.handleInvalidGoBackClick.bind(this);
     this.handleItemClick = this.handleItemClick.bind(this);
     this.handleSaveClick = this.handleSaveClick.bind(this);
     this.handleCreateClick = this.handleCreateClick.bind(this);
-    this.initialzeState = this.initialzeState.bind(this);
-    this.initializeUrlPath = this.initializeUrlPath.bind(this);
-    this.initialzeState();
-    this.initializeUrlPath();
   }
 
   componentDidMount() {
     const { initialze } = this.props;
     initialze();
+    window.onpopstate = this.handlePopState;
+  }
+
+  componentWillUnmount() {
+    window.onpopstate = null;
+  }
+
+  handlePopState(e) {
+    e.preventDefault();
+    const { location } = this.props;
+    this.setState({
+      activeNoteIndex: getPathActiveNoteIndex(location)
+    });
   }
 
   handleInvalidGoBackClick() {
@@ -57,35 +85,6 @@ class Notes extends React.Component {
   handleCreateClick() {
     const { createNote } = this.props;
     createNote();
-  }
-
-  initialzeState() {
-    const { location } = this.props;
-    const pathValue = location.pathname.replace('/', '');
-    let activeNoteIndex = 0;
-    if (pathValue) {
-      activeNoteIndex = parseInt(pathValue, 10) - 1;
-      if (Number.isNaN(activeNoteIndex)) {
-        activeNoteIndex = undefined;
-      }
-    }
-    this.state = {
-      activeNoteIndex
-    };
-  }
-
-  initializeUrlPath() {
-    const { activeNoteIndex } = this.state;
-    const { history, location } = this.props;
-    let finalPath;
-    if (typeof activeNoteIndex === 'undefined') {
-      finalPath = location.pathname;
-    } else {
-      finalPath = `/${activeNoteIndex + 1}`;
-    }
-    if (finalPath !== location.pathname) {
-      history.push(finalPath);
-    }
   }
 
   render() {
